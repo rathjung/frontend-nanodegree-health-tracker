@@ -33,6 +33,7 @@ App.Collections.Foods = Backbone.Collection.extend({
 // Create Food Item Model View
 App.Views.Food = Backbone.View.extend({
 	tagName: 'li',
+	className: 'selected-item',
 
 	template: App.Helper.template('foodsListTemplate'),
 
@@ -62,6 +63,7 @@ App.Views.Food = Backbone.View.extend({
 // Create Foods Collection View
 App.Views.Foods = Backbone.View.extend({
 	tagName: 'ul',
+	className: 'selected-result',
 
 	initialize: function(){
 		this.collection.on('add', this.addOne, this);
@@ -81,7 +83,7 @@ App.Views.AddFood = Backbone.View.extend({
 	el: '#addFood',
 
 	events: {
-		'submit' : 'submit'
+		'click #foodSubmit' : 'submit'
 	},
 
 	submit: function(e) {
@@ -125,7 +127,8 @@ App.Views.SearchResult = Backbone.View.extend({
 
 	element: {
 		searchBtn: $('#searchBtn'),
-		searchKey: $('#searchfield')
+		searchKey: $('#searchfield'),
+		searchformAlert: $('#searchformAlert')
 	},
 
 	initialize: function() {
@@ -133,30 +136,38 @@ App.Views.SearchResult = Backbone.View.extend({
 		this.element.searchBtn.on('click', function(e){
 			e.preventDefault();
 			var keyword = $.trim(self.element.searchKey.val()).toLowerCase();
+			if (!keyword) {
+				self.element.searchformAlert.text('Please insert search keyword.');
+				return;
+			}
+			self.element.searchformAlert.text('');
 			self.getAJAX(keyword);
 		});
 	},
 
 	getAJAX: function(keyword){
 		var self = this;
+		var searchUL = $('.search-result');
+
+		searchUL.html('<p>Now Loading...</p>');
+
 		$.ajax({
 			type: 'GET',
 			dataType: 'json',
 			cache: true,
-			url: 'https://api.nutritionix.com/v1_1/search/' + keyword +'?results=0%3A20&cal_min=0&cal_max=50000&fields=item_name%2Cbrand_name%2Cnf_calories&appId=13503f28&appKey=3daab5653ab630e12e2f2aa9e1cecf8e'
+			url: 'https://api.nutritionix.com/v1_1/search/' + keyword +'?results=0%3A10&cal_min=0&cal_max=50000&fields=item_name%2Cbrand_name%2Cnf_calories&appId=13503f28&appKey=3daab5653ab630e12e2f2aa9e1cecf8e'
 		}).done(function(data) {
 			var food;
-			var searchUL = $('.search-result');
 			var addBtn = $('#foodSubmit');
 			var searchItemHTML = '';
 			if (data.hits.length <= 0) {
-				var seachNotfound = '<li>Not found any food from keyword: ' + keyword + '</li>';
-				searchUL.append($(seachNotfound));
+				var seachNotfound = '<p>Not found any food from keyword: ' + keyword + '</p>';
+				searchUL.html(seachNotfound);
 				return;
 			}
 
 			for (var i = 0; i < data.hits.length; i++) {
-				searchItemHTML += '<li class="searchItem"><span class="searchName">' + data.hits[i].fields.item_name + ', ' + data.hits[i].fields.brand_name + '</span> <span class="searchCal">' + Math.round(data.hits[i].fields.nf_calories) + '</span></li>';
+				searchItemHTML += '<li class="searchItem"><span class="searchName">' + data.hits[i].fields.item_name + ', ' + data.hits[i].fields.brand_name + '</span> <span class="searchCal">' + Math.round(data.hits[i].fields.nf_calories) + ' Cal. </span></li>';
 			}
 			searchUL.html(searchItemHTML);
 			var searchItem = $('.searchItem');
@@ -168,6 +179,8 @@ App.Views.SearchResult = Backbone.View.extend({
 				$('#FoodCal').text(cal);
 				return;
 			});
+		}).fail(function(){
+			searchUL.html('<p>There\'re some error getting food information. Please try again later.</p>');
 		});
 	}
 });

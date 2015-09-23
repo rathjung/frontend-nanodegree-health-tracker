@@ -1,0 +1,188 @@
+button {
+	font-size: 1.2em;
+	padding: 0.5em 1em;
+	border: none;
+	border-radius: 1em;
+	color: #fff;
+	background: #af282e;
+	transition: all 0.3s ease 0s;
+}
+
+button:hover {
+	background: #ca692e;
+}
+
+button:disabled {
+	background: #dddddd;
+}
+
+.hero {
+	text-align: center;
+	background: url(../img/hero-background-sm.jpg);
+	background-size: cover;
+	background-position: 50% 50%;
+	min-height: 500px;
+}
+
+.hero-div-bg {
+	position: absolute;
+	left: 50%;
+	width: 500px;
+	height: 500px;
+	background: rgba(255, 255, 255, 0.9);
+	border-radius: 50%;
+	transform: translate(-50%, 0);
+}
+
+.hero-div {
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	padding: 100px 10px;
+}
+
+.hero-total-cal {
+	font-size: 8em;
+	font-weight: 500;
+}
+
+.hero-total-cal-unit {
+	margin-top: -20px;
+	font-size: 3em;
+	font-weight: 500;
+}
+
+.section-info {
+	background: #ff9331;
+	position: relative;
+	z-index: 2;
+	padding: 20px 0 40px;
+}
+
+.section-search {
+	background: #ffbc3d;
+	padding: 2em 1em;
+}
+
+.searchform {
+	margin-bottom: 2em;
+}
+
+.searchfield {
+	width: 100%;
+	font-size: 1.2em;
+	padding: 0.5em 1em;
+	border: none;
+	border-radius: 1em;
+}
+
+.searchBtn {
+	display: block;
+	width: 150px;
+	margin: 10px auto;
+}
+
+.searchformAlert {
+	display: inline-block;
+	margin: 1em 0;
+}
+
+.search-result {
+	list-style: none;
+	padding: 0;
+}
+
+.search-result li {
+	background: rgba(255, 255, 255, 0.6);
+	padding: 1em;
+	margin-bottom: 0.4em;
+	transition: all 0.3s ease 0s;
+	cursor: pointer;
+}
+
+.search-result li:hover {
+	background: rgba(255, 255, 255, 1);
+}
+
+.searchName {
+	display: block;
+	font-weight: 500;
+}
+
+.searchCal {
+	display: block;
+}
+
+.section-list {
+	background: #ffbc3d;
+	padding: 1em;
+}
+
+.addFood-div {
+	background: #fff;
+	padding: 0.5em 2em 2em 2em;
+	text-align: center;
+	margin-bottom: 2em;
+}
+
+.addFood-div h3 {
+	margin-bottom: 1em;
+}
+
+.foodSubmitBtn {
+	margin-top: 2em;
+	width: 150px;
+}
+
+.selected-result {
+	list-style: none;
+	padding: 0;
+}
+
+.selected-item {
+	background: rgba(255, 255, 255, 0.6);
+	padding: 1em;
+	margin-bottom: 0.4em;
+	transition: all 0.3s ease 0s;
+}
+
+.delete {
+	display: block;
+	text-align: right;
+	color: #af282e;
+}
+
+@media only screen and (min-width: 768px) {
+	.hero-div {
+		padding-top: 150px;
+	}
+
+	.section-info {
+		padding-top: 40px;
+	}
+
+	.searchfield {
+		width: 70%;
+	}
+
+	.searchBtn {
+		display: inline;
+		width: 25%;
+		margin: 0 0 0 10px;
+	}
+}
+
+@media only screen and (min-width: 1280px) {
+	.hero {
+		background-image: url(../img/hero-background-lg.jpg);
+		min-height: 700px;
+	}
+	.hero-div-bg {
+		width: 600px;
+		height: 600px;
+		margin: 40px auto;
+	}
+	.hero-div {
+		padding-top: 200px;
+	}
+}
