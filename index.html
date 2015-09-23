@@ -7,23 +7,43 @@
 	<title>Udacity Front-end Web Developer Nanodegree: Project 5.2</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
+	<h1>Your Today Food Calorie</h1>
+	<div>
+		<form action="">
+			<input type="text" id="searchfield">
+			<button type="submit" id="searchBtn">Search</button>
+		</form>
+		<h2>Search Result</h2>
+		<ul class="search-result">
+		</ul>
+	</div>
 
-	<h1>My Foods</h1>
 	<form id="addFood" action="">
-		<input type="text" id="FoodName" placeholder="Your new food">
-		<input type="text" id="FoodCal" placeholder="Your food calorie">
-		<input type="submit" value="Add food">
+		<h2>Your Selected Food</h2>
+		<div>
+			<h4>Food name:</h4>
+			<div id="FoodName">No selected food</div>
+		</div>
+		<div>
+			<h4>Food calorie:</h4>
+			<div id="FoodCal">No selected food</div>
+		</div>
+
+		<input type="submit" id="foodSubmit" value="Add food" disabled>
 	</form>
 	<div class="foodsList">
 		<script id="foodsListTemplate" type="text/template">
 			<span><%= title %></span> <span><%= calorie %></span> <button class="delete">Delete</button>
 		</script>
 	</div>
-	<div id="total"></div>
+	<h2>Total Calorie</h2>
+	<div id="total">
+	</div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>

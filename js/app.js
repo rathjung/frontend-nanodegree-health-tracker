@@ -86,8 +86,8 @@ App.Views.AddFood = Backbone.View.extend({
 
 	submit: function(e) {
 		e.preventDefault();
-		var newFoodName = $('#FoodName').val().toString();
-		var newFoodCal = parseInt($('#FoodCal').val());
+		var newFoodName = $('#FoodName').text().toString();
+		var newFoodCal = parseInt($('#FoodCal').text());
 
 		if (isNaN(newFoodCal)) {
 			return;
@@ -119,26 +119,64 @@ App.Views.Total = Backbone.View.extend({
 	}
 });
 
+
+// Create Search result list
+App.Views.SearchResult = Backbone.View.extend({
+
+	element: {
+		searchBtn: $('#searchBtn'),
+		searchKey: $('#searchfield')
+	},
+
+	initialize: function() {
+		var self = this;
+		this.element.searchBtn.on('click', function(e){
+			e.preventDefault();
+			var keyword = $.trim(self.element.searchKey.val()).toLowerCase();
+			self.getAJAX(keyword);
+		});
+	},
+
+	getAJAX: function(keyword){
+		var self = this;
+		$.ajax({
+			type: 'GET',
+			dataType: 'json',
+			cache: true,
+			url: 'https://api.nutritionix.com/v1_1/search/' + keyword +'?results=0%3A20&cal_min=0&cal_max=50000&fields=item_name%2Cbrand_name%2Cnf_calories&appId=13503f28&appKey=3daab5653ab630e12e2f2aa9e1cecf8e'
+		}).done(function(data) {
+			var food;
+			var searchUL = $('.search-result');
+			var addBtn = $('#foodSubmit');
+			var searchItemHTML = '';
+			if (data.hits.length <= 0) {
+				var seachNotfound = '<li>Not found any food from keyword: ' + keyword + '</li>';
+				searchUL.append($(seachNotfound));
+				return;
+			}
+
+			for (var i = 0; i < data.hits.length; i++) {
+				searchItemHTML += '<li class="searchItem"><span class="searchName">' + data.hits[i].fields.item_name + ', ' + data.hits[i].fields.brand_name + '</span> <span class="searchCal">' + Math.round(data.hits[i].fields.nf_calories) + '</span></li>';
+			}
+			searchUL.html(searchItemHTML);
+			var searchItem = $('.searchItem');
+			searchItem.on('click', function(){
+				addBtn.prop('disabled', false);
+				var name = $(this).find('.searchName').text();
+				var cal = $(this).find('.searchCal').text();
+				$('#FoodName').text(name);
+				$('#FoodCal').text(cal);
+				return;
+			});
+		});
+	}
+});
+
 // Initialize App
-var foodList = new App.Collections.Foods([
-	// {
-	// 	title: 'Food item 1',
-	// 	calorie: 200
-	// },
-	// {
-	// 	title: 'Food item 2',
-	// 	calorie: 300
-	// },
-	// {
-	// 	title: 'Food item 3',
-	// 	calorie: 400
-	// }
-]);
-
-
+var foodList = new App.Collections.Foods([]);
 var addFoodView = new App.Views.AddFood({collection: foodList});
 var foodListView = new App.Views.Foods({collection: foodList});
 var totalFoodCal = new App.Views.Total({collection: foodList});
-
+var searchResult = new App.Views.SearchResult();
 
 $('.foodsList').html(foodListView.render().el);
