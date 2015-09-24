@@ -13,7 +13,7 @@ App.Helper.template = function(id) {
 // Create Food Model
 App.Models.Food = Backbone.Model.extend({
 	default: {
-		calorie : 0
+		calorie: 0
 	},
 	validate: function(attrs){
 		if(! $.trim(attrs.title)) {
@@ -27,7 +27,8 @@ App.Models.Food = Backbone.Model.extend({
 
 // Create Foods Collection
 App.Collections.Foods = Backbone.Collection.extend({
-	model: App.Models.Food
+	model: App.Models.Food,
+	localStorage: new Backbone.LocalStorage('FoodsLocal')
 });
 
 // Create Food Item Model View
@@ -101,6 +102,7 @@ App.Views.AddFood = Backbone.View.extend({
 
 		var food = new App.Models.Food({title: newFoodName, calorie: newFoodCal}, {validate: true});
 		this.collection.add(food);
+		food.save();
 	}
 });
 
@@ -191,6 +193,7 @@ App.Views.SearchResult = Backbone.View.extend({
 
 // Initialize App
 var foodList = new App.Collections.Foods([]);
+foodList.fetch();
 var addFoodView = new App.Views.AddFood({collection: foodList});
 var foodListView = new App.Views.Foods({collection: foodList});
 var totalFoodCal = new App.Views.Total({collection: foodList});
