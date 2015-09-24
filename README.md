@@ -4,7 +4,7 @@ This project is for Udacity Front-end Developer course. Its main purpose is for 
 
 ## Demo
 
-[This Link](http://rath.asia/demo/myjs/helth-track/)
+[This Link](http://rath.asia/demo/myjs/health-track/)
 
 ## How to install
 
