@@ -150,6 +150,7 @@ button:disabled {
 	display: block;
 	text-align: right;
 	color: #af282e;
+	cursor: pointer;
 }
 
 @media only screen and (min-width: 768px) {

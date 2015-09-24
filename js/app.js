@@ -56,6 +56,9 @@ App.Views.Food = Backbone.View.extend({
 	},
 
 	remove: function(){
+		if (this.$el.siblings().length === 0) {
+			$('#resultAlert').show();
+		}
 		this.$el.remove();
 	}
 });
@@ -73,6 +76,7 @@ App.Views.Foods = Backbone.View.extend({
 		return this;
 	},
 	addOne: function(food){
+		$('#resultAlert').hide();
 		var foodView = new App.Views.Food ({model: food});
 		this.$el.append(foodView.render().el);
 	}
