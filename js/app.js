@@ -6,6 +6,7 @@ window.App = {
 	Helper: {}
 };
 
+// Helper function for templating
 App.Helper.template = function(id) {
 	return _.template($('#' + id).html());
 };
@@ -15,6 +16,7 @@ App.Models.Food = Backbone.Model.extend({
 	default: {
 		calorie: 0
 	},
+	// Validation for every food model must have name and calorie
 	validate: function(attrs){
 		if(! $.trim(attrs.title)) {
 			return 'Must provide Food name';
@@ -28,6 +30,7 @@ App.Models.Food = Backbone.Model.extend({
 // Create Foods Collection
 App.Collections.Foods = Backbone.Collection.extend({
 	model: App.Models.Food,
+	// Implement localstorage
 	localStorage: new Backbone.LocalStorage('FoodsLocal')
 });
 
@@ -36,27 +39,34 @@ App.Views.Food = Backbone.View.extend({
 	tagName: 'li',
 	className: 'selected-item',
 
+	// set up template for later use
 	template: App.Helper.template('foodsListTemplate'),
 
+	// listen to destroy event, set context to this model
 	initialize: function(){
 		this.model.on('destroy', this.remove, this);
 	},
 
+	// when click on element with class .delete call destroy method
 	events: {
 		'click .delete' : 'destroy'
 	},
 
+	// render this model by parsing object to template
 	render: function(){
 		var template = this.template(this.model.toJSON());
 		this.$el.html(template);
 		return this;
 	},
 
+	// method for destroy the model
 	destroy: function(){
 		this.model.destroy();
 	},
 
+	// method for remove the element from the DOM.
 	remove: function(){
+		// if no food element left then show message to tell user to add food.
 		if (this.$el.siblings().length === 0) {
 			$('#resultAlert').show();
 		}
@@ -69,13 +79,16 @@ App.Views.Foods = Backbone.View.extend({
 	tagName: 'ul',
 	className: 'selected-result',
 
+	// listen to collection add event. Then call a method to create an element and append to the DOM.
 	initialize: function(){
 		this.collection.on('add', this.addOne, this);
 	},
+	// Method for render unordered list of selected food. Use for initiating the app with data from localstorage
 	render: function(){
 		this.collection.each(this.addOne, this);
 		return this;
 	},
+	// Method for add new model and append to the DOM.
 	addOne: function(food){
 		$('#resultAlert').hide();
 		var foodView = new App.Views.Food ({model: food});
@@ -87,21 +100,26 @@ App.Views.Foods = Backbone.View.extend({
 App.Views.AddFood = Backbone.View.extend({
 	el: '#addFood',
 
+	// Fire event when clicked on element with id foodSubmit
 	events: {
 		'click #foodSubmit' : 'submit'
 	},
 
 	submit: function(e) {
 		e.preventDefault();
+		// Get value from selected food
 		var newFoodName = $('#FoodName').text().toString();
 		var newFoodCal = parseInt($('#FoodCal').text());
 
+		// Check if food Calorie is really a number. If it isn't then return
 		if (isNaN(newFoodCal)) {
 			return;
 		}
 
+		// Add food model with data above to the collection.
 		var food = new App.Models.Food({title: newFoodName, calorie: newFoodCal}, {validate: true});
 		this.collection.add(food);
+		// Add to localstorage
 		food.save();
 	}
 });
@@ -112,15 +130,18 @@ App.Views.Total = Backbone.View.extend({
 
 	initialize: function(){
 		this.render();
+		// listen to update event on collection. If there's an update then re-render this view
 		this.collection.on('update', this.render, this);
 	},
 
 	render: function(){
 		var total = 0;
+		// Loop through collection item and add it's calorie to total calorie
 		this.collection.each(function(elem){
 			total += parseInt(elem.get('calorie'));
 		}, this);
 
+		// Show total number
 		this.$el.text(total);
 
 		return this;
@@ -131,6 +152,7 @@ App.Views.Total = Backbone.View.extend({
 // Create Search result list
 App.Views.SearchResult = Backbone.View.extend({
 
+	// Cache common element use in this view.
 	element: {
 		searchBtn: $('#searchBtn'),
 		searchKey: $('#searchfield'),
@@ -141,12 +163,16 @@ App.Views.SearchResult = Backbone.View.extend({
 		var self = this;
 		this.element.searchBtn.on('click', function(e){
 			e.preventDefault();
+			// Preparing the keyword
 			var keyword = $.trim(self.element.searchKey.val()).toLowerCase();
+			// Check if user provide a keyword or not
 			if (!keyword) {
 				self.element.searchformAlert.text('Please insert search keyword.');
 				return;
 			}
+			// Remove the message that tell user to type a keyword
 			self.element.searchformAlert.text('');
+			// Firing an AJAX request
 			self.getAJAX(keyword);
 		});
 	},
@@ -166,17 +192,22 @@ App.Views.SearchResult = Backbone.View.extend({
 			var food;
 			var addBtn = $('#foodSubmit');
 			var searchItemHTML = '';
+
+			// If no food found then tell the user.
 			if (data.hits.length <= 0) {
 				var seachNotfound = '<p>Not found any food from keyword: ' + keyword + '</p>';
 				searchUL.html(seachNotfound);
 				return;
 			}
 
+			// Iterate through each food object and get the data from it
 			for (var i = 0; i < data.hits.length; i++) {
 				searchItemHTML += '<li class="searchItem"><span class="searchName">' + data.hits[i].fields.item_name + ', ' + data.hits[i].fields.brand_name + '</span> <span class="searchCal">' + Math.round(data.hits[i].fields.nf_calories) + ' Cal. </span></li>';
 			}
+			// Insert to the DOM.
 			searchUL.html(searchItemHTML);
 			var searchItem = $('.searchItem');
+			// Listen to an event. If user clicked on the targeted element then get the element's value
 			searchItem.on('click', function(){
 				addBtn.prop('disabled', false);
 				var name = $(this).find('.searchName').text();
@@ -186,6 +217,7 @@ App.Views.SearchResult = Backbone.View.extend({
 				return;
 			});
 		}).fail(function(){
+			// If AJAX request is fail then tell the user.
 			searchUL.html('<p>There\'re some error getting food information. Please try again later.</p>');
 		});
 	}
